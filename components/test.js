@@ -1,7 +1,3 @@
-let arr = ["fish", "cow", "goat", "dog", "donkey", "cat", "mice", "mouse"];
-
-arr
-  .filter((_, i) => i % 2 === 0)
-  .map((item, index) => console.log(index === 1 ? "$" : item));
-
-arr.filter((_, i) => i % 2 !== 0).map((item) => console.log(item));
+const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+const isValid = emailRegex.test("joe@gmal.com")
+console.log(isValid);

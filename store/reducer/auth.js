@@ -1,7 +1,7 @@
 import User from "../../model/User";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SIGN_UP } from "../actions/auth";
+import { LOGIN, SIGN_UP } from "../actions/auth";
 
 const initialState = {
   currentUser: User,
@@ -11,7 +11,7 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case SIGN_UP:
-      const user = new User(
+      const regUser = new User(
         action.userData.id,
         action.userData.email,
         action.userData.username
@@ -19,7 +19,18 @@ export default (state = initialState, action) => {
 
       return {
         ...state,
-        currentUser: user,
+        currentUser: regUser,
+      };
+    case LOGIN:
+      const logUser = new User(
+        action.userData.id,
+        action.userData.email,
+        action.userData.username
+      );
+
+      return {
+        ...state,
+        currentUser: logUser,
       };
   }
   return state;

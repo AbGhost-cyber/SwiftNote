@@ -10,7 +10,7 @@ export const fontsMapper = {
   pro_sans_bold: "product-sans-bold",
 };
 
-export const SWIFT_SERVER_URL = "http://172.20.10.4:8082";
+export const SWIFT_SERVER_URL = "http://192.168.1.104:8082";
 
 export const authStyle = StyleSheet.create({
   container: {
@@ -30,3 +30,28 @@ export const authStyle = StyleSheet.create({
   },
   footerText: { color: colors.accent, fontFamily: fontsMapper.pro_sans_bold },
 });
+
+export const FORM_INPUT_UPDATE = "UPDATE";
+export const formReducer = (state, action) => {
+  switch (action.type) {
+    case FORM_INPUT_UPDATE:
+      const updatedValues = {
+        ...state.inputValues,
+        [action.input]: action.value,
+      };
+      const updatedValidities = {
+        ...state.inputValidities,
+        [action.input]: action.isValid,
+      };
+      let updatedFormIsValid = true;
+      for (const key in updatedValidities) {
+        updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+      }
+      return {
+        formIsValid: updatedFormIsValid,
+        inputValidities: updatedValidities,
+        inputValues: updatedValues,
+      };
+  }
+  return state;
+};
