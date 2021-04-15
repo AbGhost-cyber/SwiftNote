@@ -1,51 +1,24 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
   Dimensions,
   ScrollView,
   SafeAreaView,
+  Text,
 } from "react-native";
 
-import NoteItem from "./components/NoteItem";
+import NoteItem from "../../components/NoteItem";
 
 const { width } = Dimensions.get("window");
 
 const NoteScreen = (props) => {
   const wWidth = (width - 15 * 2 - 7) / 2;
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.subContainer}>
-        <View style={{ flexDirection: "row" }}>
-          <View style={{ marginRight: 15 }}>
-            {dummyData
-              .filter((_, i) => i % 2 !== 0)
-              .map((item, index) => (
-                <NoteItem
-                  key={item.id}
-                  dummyData={item}
-                  width={wWidth}
-                  aspectRatio={index % 2 !== 0 ? 120 / 165 : 1}
-                  isSmall={index % 2 !== 0}
-                />
-              ))}
-          </View>
-          <View>
-            {dummyData
-              .filter((_, i) => i % 2 === 0)
-              .map((item, index) => (
-                <NoteItem
-                  key={item.id}
-                  dummyData={item}
-                  width={wWidth}
-                  aspectRatio={index % 2 === 0 ? 120 / 165 : 1}
-                  isSmall={index % 2 === 0}
-                />
-              ))}
-          </View>
-        </View>
-      </ScrollView>
+    <SafeAreaView>
+      <StatusBar />
+      <Text>Welcome to Note Screen</Text>
     </SafeAreaView>
   );
 };
@@ -62,3 +35,36 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
 });
+
+// <SafeAreaView style={styles.container}>
+// <ScrollView contentContainerStyle={styles.subContainer}>
+//   <View style={{ flexDirection: "row" }}>
+//     <View style={{ marginRight: 15 }}>
+//       {dummyData
+//         .filter((_, i) => i % 2 !== 0)
+//         .map((item, index) => (
+//           <NoteItem
+//             key={item.id}
+//             dummyData={item}
+//             width={wWidth}
+//             aspectRatio={index % 2 !== 0 ? 120 / 165 : 1}
+//             isSmall={index % 2 !== 0}
+//           />
+//         ))}
+//     </View>
+//     <View>
+//       {dummyData
+//         .filter((_, i) => i % 2 === 0)
+//         .map((item, index) => (
+//           <NoteItem
+//             key={item.id}
+//             dummyData={item}
+//             width={wWidth}
+//             aspectRatio={index % 2 === 0 ? 120 / 165 : 1}
+//             isSmall={index % 2 === 0}
+//           />
+//         ))}
+//     </View>
+//   </View>
+// </ScrollView>
+// </SafeAreaView>

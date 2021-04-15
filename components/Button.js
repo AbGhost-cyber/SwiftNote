@@ -3,11 +3,11 @@ import { StyleSheet, Text, ActivityIndicator } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import { colors, fontsMapper } from "../constants/index";
 
-const CustomButton = ({ onPress, text, showProgIndicator }) => {
+const CustomButton = ({ onPress, text, showProgIndicator, enabled }) => {
   return (
-    <RectButton style={[styles.container]} onPress={onPress}>
+    <RectButton style={[styles.container]} onPress={onPress} enabled={enabled}>
       {showProgIndicator ? (
-        <ActivityIndicator/>
+        <ActivityIndicator />
       ) : (
         <Text style={styles.label}>{text}</Text>
       )}

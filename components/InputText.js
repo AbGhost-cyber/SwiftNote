@@ -46,6 +46,8 @@ const InputText = (props) => {
     returnKeyType,
   } = props;
 
+  const [isFocused, setIsFocused] = useState(false);
+
   const [inputState, dispatch] = useReducer(inputReducer, {
     value: initValue ? initValue : "",
     isValid: initValid,
@@ -64,8 +66,8 @@ const InputText = (props) => {
     if (required && text.trim().length === 0) {
       isValid = false;
     }
-    if (email && emailRegex.test(text.toLowerCase())) {
-      isValid = true;
+    if (email && !emailRegex.test(text.toLowerCase())) {
+      isValid = false;
     }
     if (min != null && +text < props.min) {
       isValid = false;
@@ -89,7 +91,12 @@ const InputText = (props) => {
       <Text style={styles.holder}>{holder}</Text>
       <TextInput
         {...props}
-        style={styles.input}
+        style={[
+          styles.input,
+          isFocused
+            ? { borderColor: colors.accent }
+            : { borderColor: colors.primary },
+        ]}
         onChangeText={textChangeHandler}
         value={inputState.value}
         numberOfLines={2}
@@ -101,6 +108,7 @@ const InputText = (props) => {
         placeholderTextColor={colors.accent}
         onBlur={lostFocusHandler}
         returnKeyType={returnKeyType}
+        onFocus={() => setIsFocused(true)}
       />
       <TextInputError
         showError={!inputState.isValid && inputState.touched}
@@ -115,7 +123,6 @@ export default InputText;
 const styles = StyleSheet.create({
   input: {
     borderWidth: 3,
-    borderColor: colors.accent,
     color: "white",
     padding: 20,
     borderRadius: 12,

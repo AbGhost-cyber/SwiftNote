@@ -14,6 +14,7 @@ export default (state = initialState, action) => {
       const regUser = new User(
         action.userData.id,
         action.userData.email,
+        action.userData.password,
         action.userData.username
       );
 
@@ -25,6 +26,7 @@ export default (state = initialState, action) => {
       const logUser = new User(
         action.userData.id,
         action.userData.email,
+        action.userData.password,
         action.userData.username
       );
 

@@ -1,7 +1,9 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, findNodeHandle } from "react-native";
+import TextInputState from "react-native";
+import * as SecureStore from "expo-secure-store";
 
 export const colors = {
-  primary: "2E3342",
+  primary: "#2E3342",
   accent: "#8D0696",
 };
 
@@ -10,7 +12,7 @@ export const fontsMapper = {
   pro_sans_bold: "product-sans-bold",
 };
 
-export const SWIFT_SERVER_URL = "http://192.168.1.104:8082";
+export const SWIFT_SERVER_URL = "http://172.20.10.4:8082";
 
 export const authStyle = StyleSheet.create({
   container: {
@@ -29,6 +31,15 @@ export const authStyle = StyleSheet.create({
     fontFamily: fontsMapper.pro_sans,
   },
   footerText: { color: colors.accent, fontFamily: fontsMapper.pro_sans_bold },
+  snackBarStyles: {
+    flex: 1,
+    flexDirection: "column",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: colors.accent,
+  },
 });
 
 export const FORM_INPUT_UPDATE = "UPDATE";
@@ -55,3 +66,31 @@ export const formReducer = (state, action) => {
   }
   return state;
 };
+
+export function focusTextInput(node) {
+  try {
+    TextInputState.focusTextInput(findNodeHandle(node));
+  } catch (e) {
+    console.log("Couldn't focus text input: ", e.message);
+  }
+}
+
+export const validatePasswords = (pw1, pw2) => {
+  return pw1 === pw2;
+};
+
+export async function getValueFor(key) {
+  let result = await SecureStore.getItemAsync(key);
+  if (result) {
+    return result;
+  } else {
+    return null;
+  }
+}
+
+export async function save(key, value) {
+  await SecureStore.setItemAsync(key, value);
+}
+export async function deleteItem(key) {
+  await SecureStore.deleteItemAsync(key);
+}
