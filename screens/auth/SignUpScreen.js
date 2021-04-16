@@ -3,7 +3,6 @@ import { Text, View, SafeAreaView, Alert, Dimensions } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useSelector, useDispatch } from "react-redux";
 import SnackBar from "../../components/Snackbar";
-import { NavigationActions, StackActions } from "react-navigation";
 import * as SecureStore from "expo-secure-store";
 
 import CustomButton from "../../components/Button";
@@ -45,14 +44,7 @@ const SignUpScreen = ({ navigation }) => {
     const getAuthState = async () => {
       let result = await SecureStore.getItemAsync("isLoggedIn");
       if (result) {
-        navigation.dispatch(
-          StackActions.reset({
-            index: 0,
-            actions: [
-              NavigationActions.navigate({ routeName: "NoteMainActivity" }),
-            ],
-          })
-        );
+        navigation.replace("NoteMainActivity")
       } else {
         console.log("no value for this key");
       }

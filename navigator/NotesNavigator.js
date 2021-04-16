@@ -1,24 +1,156 @@
-import { createStackNavigator } from "react-navigation-stack";
-import { createAppContainer } from "react-navigation";
+import { View, StyleSheet } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import {
+  BottomTabBar,
+  createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import React from "react";
+
 import SignUpScreen from "../screens/auth/SignUpScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import NoteScreen from "../screens/note/NoteScreen";
 import EditNoteScreen from "../screens/note/EditNoteScreen";
 import PreviewNoteScreen from "../screens/note/PreviewNoteScreen";
+import LogoutScreen from "../screens/LogoutScreen";
+import SearchScreen from "../screens/SearchScreen";
+import { IS_IPHONE_X } from "../utils/utils";
+import { EmptyScreen } from "../screens/EmptyScreen";
+import TabBarButton from "../components/TabBarButton";
+import { colors, fontsMapper } from "../constants";
 
-const NoteNavigator = createStackNavigator(
-  {
-    SignUp: SignUpScreen,
-    Login: LoginScreen,
-    NoteMainActivity: NoteScreen,
-    EditNote: EditNoteScreen,
-    PreviewNote: PreviewNoteScreen,
+const Stack = createStackNavigator();
+const BottomBar = createBottomTabNavigator();
+
+export const StackNav = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="NoteMainActivity" component={NoteTabBar} />
+        <Stack.Screen name="Preview" component={PreviewNoteScreen} />
+        <Stack.Screen name="EditNote" component={EditNoteScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export const NoteTabBar = () => {
+  return (
+    <BottomBar.Navigator
+      tabBar={(props) => (
+        <View style={styles.navigatorContainer}>
+          <BottomTabBar {...props} />
+          {IS_IPHONE_X && (
+            <View
+              style={[styles.xFillLine, { backgroundColor: colors.accent }]}
+            />
+          )}
+        </View>
+      )}
+      tabBarOptions={{
+        showIcon: true,
+        style: styles.navigator,
+        tabStyle: { backgroundColor: "white" },
+        activeTintColor: colors.accent,
+        inactiveTintColor: "black",
+        labelStyle: {
+          fontFamily: fontsMapper.pro_sans_bold,
+          fontSize: 13,
+        },
+      }}
+    >
+      <BottomBar.Screen
+        name="Notes"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="book" size={26} color={color} />
+          ),
+        }}
+      >
+        {(props) => <NoteScreen />}
+      </BottomBar.Screen>
+      <BottomBar.Screen
+        name="Profile"
+        component={NoteScreen}
+        options={{
+          tabBarIcon: ({ color }) => null,
+          tabBarLabel: () => {
+            return null;
+          },
+          tabBarButton: () => <TabBarButton bgColor="white" showTab={false} />,
+        }}
+      />
+      <BottomBar.Screen
+        name="Add Note"
+        options={({ navigation }) => {
+          return {
+            tabBarButton: (props) => (
+              <TabBarButton
+                bgColor="white"
+                showTab
+                {...props}
+                onPress={() => navigation.navigate("EditNote")}
+              />
+            ),
+          };
+        }}
+      >
+        {(props) => <NoteScreen {...props} />}
+      </BottomBar.Screen>
+      <BottomBar.Screen
+        name="Messages"
+        options={{
+          tabBarLabel: () => {
+            return null;
+          },
+          tabBarButton: () => <TabBarButton bgColor="white" showTab={false} />,
+        }}
+      >
+        {(props) => <NoteScreen {...props} />}
+      </BottomBar.Screen>
+      <BottomBar.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <FontAwesome name="search" size={26} color={color} />
+          ),
+        }}
+      />
+    </BottomBar.Navigator>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
   },
-  {
-    defaultNavigationOptions: {
-      headerShown: false,
+  navigatorContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
     },
-  }
-);
-
-export default createAppContainer(NoteNavigator);
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+  },
+  navigator: {
+    borderTopWidth: 0,
+    backgroundColor: "transparent",
+    elevation: 30,
+  },
+  xFillLine: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 34,
+  },
+});

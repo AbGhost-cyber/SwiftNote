@@ -8,7 +8,8 @@ import AppLoading from "expo-app-loading";
 
 import authReducer from "./store/reducer/auth";
 import noteReducer from "./store/reducer/note";
-import NotesNavigator from "./navigator/NotesNavigator";
+import { NavigationContainer } from "@react-navigation/native";
+import { StackNav, NoteTabBar } from "./navigator/NotesNavigator";
 
 enableScreens();
 
@@ -20,7 +21,7 @@ const fetchFonts = () => {
 };
 const rootReducer = combineReducers({
   auth: authReducer,
-  // notes: noteReducer,
+  notes: noteReducer,
 });
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 export default function App() {
@@ -38,7 +39,9 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <NotesNavigator />
+      <StackNav />
     </Provider>
   );
 }
+
+<NoteTabBar barColor="#F6F7EB" />;

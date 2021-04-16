@@ -79,14 +79,9 @@ export const validatePasswords = (pw1, pw2) => {
   return pw1 === pw2;
 };
 
-export async function getValueFor(key) {
-  let result = await SecureStore.getItemAsync(key);
-  if (result) {
-    return result;
-  } else {
-    return null;
-  }
-}
+export const id = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+};
 
 export async function save(key, value) {
   await SecureStore.setItemAsync(key, value);

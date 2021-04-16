@@ -2,7 +2,7 @@ import React, { useCallback, useReducer, useState, useEffect } from "react";
 import { Text, SafeAreaView, Alert, Dimensions, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { NavigationActions, StackActions } from "react-navigation";
+import * as SecureStore from "expo-secure-store";
 
 import CustomButton from "../../components/Button";
 import InputText from "../../components/InputText";
@@ -13,8 +13,6 @@ import {
   focusTextInput,
   getValueFor,
   save,
-  colors,
-  fontsMapper,
 } from "../../constants";
 import * as authActions from "../../store/actions/auth";
 import SnackBar from "../../components/Snackbar";
@@ -43,14 +41,7 @@ const LoginScreen = ({ navigation }) => {
     const getAuthState = async () => {
       let result = await SecureStore.getItemAsync("isLoggedIn");
       if (result) {
-        navigation.dispatch(
-          StackActions.reset({
-            index: 0,
-            actions: [
-              NavigationActions.navigate({ routeName: "NoteMainActivity" }),
-            ],
-          })
-        );
+        navigation.replace("NoteMainActivity");
       } else {
         console.log("no value for this key");
       }
@@ -78,15 +69,7 @@ const LoginScreen = ({ navigation }) => {
       save("isLoggedIn", "true");
       setSucess(true);
       setTimeout(() => {
-        //navigation.reset({});
-        navigation.dispatch(
-          StackActions.reset({
-            index: 0,
-            actions: [
-              NavigationActions.navigate({ routeName: "NoteMainActivity" }),
-            ],
-          })
-        );
+        navigation.replace("NoteMainActivity");
       }, 500);
     } catch (error) {
       setError(error.message);

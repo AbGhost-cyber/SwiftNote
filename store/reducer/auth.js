@@ -1,11 +1,8 @@
 import User from "../../model/User";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LOGIN, SIGN_UP } from "../actions/auth";
 
 const initialState = {
   currentUser: User,
-  isAuthenticated: false,
 };
 
 export default (state = initialState, action) => {
