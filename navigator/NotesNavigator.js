@@ -57,8 +57,8 @@ export const NoteTabBar = () => {
         activeTintColor: colors.accent,
         inactiveTintColor: "black",
         labelStyle: {
-          fontFamily: fontsMapper.pro_sans_bold,
-          fontSize: 13,
+          fontFamily: fontsMapper.pro_sans,
+          fontSize: 12,
         },
       }}
     >
@@ -66,7 +66,7 @@ export const NoteTabBar = () => {
         name="Notes"
         options={{
           tabBarIcon: ({ color }) => (
-            <FontAwesome name="book" size={26} color={color} />
+            <FontAwesome name="book" size={23} color={color} />
           ),
         }}
       >
@@ -116,7 +116,7 @@ export const NoteTabBar = () => {
         component={SearchScreen}
         options={{
           tabBarIcon: ({ color }) => (
-            <FontAwesome name="search" size={26} color={color} />
+            <Ionicons name="ios-search" size={23} color={color} />
           ),
         }}
       />

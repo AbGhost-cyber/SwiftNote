@@ -25,7 +25,7 @@ export const getAllNotes = () => {
           }
         );
         const resData = await response.json();
-        console.log(resData);
+
         if (response.ok) {
           dispatch({
             type: GET_ALL_NOTES,

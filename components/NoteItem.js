@@ -1,29 +1,41 @@
 import React from "react";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
+import moment from "moment";
+import { colors, fontsMapper } from "../constants";
 
-const NoteItem = ({ dummyData, width, aspectRatio, isSmall }) => {
-  const { name, color: backgroundColor } = dummyData;
+const formattedDate = (timeInMillis) => {
+  return moment(timeInMillis).fromNow();
+};
+const NoteItem = (props) => {
+  const { width, aspectRatio, isSmall, note, color } = props;
   return (
-    <View
-      style={[
-        styles.parent,
-        { backgroundColor, width, height: width * aspectRatio },
-      ]}
-    >
-      <Text
-        numberOfLines={isSmall ? 2 : 4}
-        style={{ ...styles.title, width: width }}
+    <TouchableOpacity activeOpacity={0.9}>
+      <View
+        style={[
+          styles.parent,
+          { backgroundColor: color, width, height: width * aspectRatio },
+        ]}
       >
-        {name}
-      </Text>
-      {!isSmall && (
-        <Text numberOfLines={5} style={[styles.desc, { width: width }]}>
-          Hi, im description
-          textgsgsgsgsgsgggsgsgsgsgsgsgsgsgsgssgsggsgsgsgsgsgsggsgssgsgsggsgsgssggsgsgsgsgsgsgs
+        <Text
+          numberOfLines={isSmall ? 2 : 4}
+          style={{ ...styles.title, width: width }}
+        >
+          {note.title}
         </Text>
-      )}
-      <Text style={[styles.subText]}>2 sept 2020</Text>
-    </View>
+        {!isSmall && (
+          <Text numberOfLines={5} style={[styles.subText, { width: width }]}>
+            {note.content}
+          </Text>
+        )}
+        <Text style={[styles.date]}>{formattedDate(note.date)}</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -32,28 +44,36 @@ export default NoteItem;
 const styles = StyleSheet.create({
   parent: {
     marginVertical: 7,
-    paddingVertical: 20,
+    paddingVertical: 10,
     borderRadius: 11,
   },
   title: {
     justifyContent: "flex-start",
-    color: "white",
-    fontSize: 22,
+    color: colors.primary,
+    fontSize: 21,
     paddingHorizontal: 20,
+    fontFamily: fontsMapper.pro_sans_bold,
   },
-  subText: {
+  date: {
     width: 120,
     padding: 3,
-    fontSize: 17,
-    borderWidth: 2,
-    borderColor: "white",
+    fontSize: 15,
+    borderWidth: 1,
+    borderColor: colors.primary,
     marginTop: 10,
-    borderRadius: 9,
+    borderRadius: 7,
     textAlign: "center",
-    marginStart: 20,
+    marginStart: 18,
+    fontFamily: fontsMapper.pro_sans,
+    fontWeight: "300",
+    color: colors.primary,
   },
-  desc: {
+  subText: {
     justifyContent: "flex-start",
     paddingHorizontal: 20,
+    fontFamily: fontsMapper.pro_sans,
+    fontWeight: "600",
+    color: colors.primary,
+    fontSize: 18,
   },
 });
