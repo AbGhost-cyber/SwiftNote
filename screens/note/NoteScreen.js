@@ -14,11 +14,11 @@ import { Ionicons } from "@expo/vector-icons";
 
 import NoteItem from "../../components/NoteItem";
 import * as noteActions from "../../store/actions/note";
-import { colors, fontsMapper, id } from "../../constants/index";
+import { colors, fontsMapper } from "../../constants/index";
 
 const { width } = Dimensions.get("window");
 
-const NoteScreen = (props) => {
+const NoteScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const notes = useSelector((state) => state.notes.notes);
   const wWidth = (width - 15 * 2 - 7) / 2;
@@ -30,20 +30,19 @@ const NoteScreen = (props) => {
     fetchNotes();
   }, [dispatch]);
 
-  
+  // const handleAddNote = useCallback(async () => {
+  //   try {
+  //     const date = new Date();
+  //     let result = await SecureStore.getItemAsync("user_profile");
+  //     if (result) {
+  //       const user = JSON.parse(result);
+  //       await dispatch(noteActions.getAllNotes());
+  //     }
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // }, [dispatch]);
 
-  const handleAddNote = useCallback(async () => {
-    try {
-      const date = new Date();
-      let result = await SecureStore.getItemAsync("user_profile");
-      if (result) {
-        const user = JSON.parse(result);
-        await dispatch(noteActions.getAllNotes());
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  }, [dispatch]);
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ margin: 10 }}>
@@ -66,6 +65,14 @@ const NoteScreen = (props) => {
                     aspectRatio={index % 2 !== 0 ? 120 / 165 : 1}
                     isSmall={index % 2 !== 0}
                     color={item.color}
+                    onNotePress={() =>
+                      navigation.navigate({
+                        name: "PreviewNote",
+                        params: {
+                          noteId: item.id,
+                        },
+                      })
+                    }
                   />
                 ))}
             </View>
@@ -80,6 +87,14 @@ const NoteScreen = (props) => {
                     aspectRatio={index % 2 === 0 ? 120 / 165 : 1}
                     isSmall={index % 2 === 0}
                     color={item.color}
+                    onNotePress={() =>
+                      navigation.navigate({
+                        name: "PreviewNote",
+                        params: {
+                          noteId: item.id,
+                        },
+                      })
+                    }
                   />
                 ))}
             </View>

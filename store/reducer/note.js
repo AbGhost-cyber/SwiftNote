@@ -1,8 +1,14 @@
-import { DELETE_NOTE, GET_ALL_NOTES, UPSERT_NOTE } from "../actions/note";
+import {
+  DELETE_NOTE,
+  GET_ALL_NOTES,
+  GET_NOTE,
+  UPSERT_NOTE,
+} from "../actions/note";
 import Note from "../../model/Note";
 
 const initialState = {
   notes: [],
+  curPreviewedNote: {},
 };
 
 export default (state = initialState, action) => {
@@ -24,6 +30,12 @@ export default (state = initialState, action) => {
         ...state,
         notes: state.notes.concat(note),
       };
+    case GET_NOTE:
+      return {
+        ...state,
+        curPreviewedNote: action.currentNote,
+      };
+
     case DELETE_NOTE:
       return {
         ...state,

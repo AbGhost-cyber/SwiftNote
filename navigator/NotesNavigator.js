@@ -30,7 +30,7 @@ export const StackNav = () => {
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="NoteMainActivity" component={NoteTabBar} />
-        <Stack.Screen name="Preview" component={PreviewNoteScreen} />
+        <Stack.Screen name="PreviewNote" component={PreviewNoteScreen} />
         <Stack.Screen name="EditNote" component={EditNoteScreen} />
       </Stack.Navigator>
     </NavigationContainer>
@@ -64,14 +64,13 @@ export const NoteTabBar = () => {
     >
       <BottomBar.Screen
         name="Notes"
+        component={NoteScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <FontAwesome name="book" size={23} color={color} />
           ),
         }}
-      >
-        {(props) => <NoteScreen />}
-      </BottomBar.Screen>
+      />
       <BottomBar.Screen
         name="Profile"
         component={NoteScreen}

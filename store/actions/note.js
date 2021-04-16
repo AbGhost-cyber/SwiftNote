@@ -1,6 +1,7 @@
 export const UPSERT_NOTE = "UPSERT_NOTE";
 export const DELETE_NOTE = "DELETE_NOTE";
 export const GET_ALL_NOTES = "GET_ALL_NOTES";
+export const GET_NOTE = "GET_NOTE";
 
 import { SWIFT_SERVER_URL } from "../../constants/index";
 
@@ -56,11 +57,15 @@ export const getNoteById = (id) => {
                 "Basic " + encode(user.email + ":" + user.password),
               "Content-Type": "application/json",
             }),
-            body: JSON.stringify({ id, title, content, date, owner, color }),
           }
         );
+
         const responseData = await response.json();
-        console.log(responseData);
+        if (response.ok) {
+          dispatch({ type: GET_NOTE, noteId: id, currentNote: responseData });
+        }else{
+          throw new Error("an unknown error occurred 😔");
+        }
       } else {
         throw new Error("sign up or sign in to access this feature 🔒");
       }

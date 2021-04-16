@@ -13,9 +13,9 @@ const formattedDate = (timeInMillis) => {
   return moment(timeInMillis).fromNow();
 };
 const NoteItem = (props) => {
-  const { width, aspectRatio, isSmall, note, color } = props;
+  const { width, aspectRatio, isSmall, note, color, onNotePress } = props;
   return (
-    <TouchableOpacity activeOpacity={0.9}>
+    <TouchableOpacity activeOpacity={0.9} onPress={onNotePress}>
       <View
         style={[
           styles.parent,
