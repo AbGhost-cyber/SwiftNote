@@ -10,13 +10,12 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import * as SecureStore from "expo-secure-store";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons,MaterialCommunityIcons } from "@expo/vector-icons";
 
 import NoteItem from "../../components/NoteItem";
 import * as noteActions from "../../store/actions/note";
 import { colors, fontsMapper } from "../../constants/index";
 import AddEditNoteModal from "../../components/AddEditNoteModal";
-import { set } from "react-native-reanimated";
 
 const { width } = Dimensions.get("window");
 
@@ -41,14 +40,13 @@ const NoteScreen = ({ route, navigation }) => {
 
   const handleAddNoteClick = useCallback(() => {
     if (route.params) {
-      const { AddNoteClicked } = route.params;
-      if(AddNoteClicked !== null){
+      const { addNoteClicked } = route.params;
+      if (addNoteClicked === true) {
         setShowAddNoteModal(true);
-        console.log("clicked");
       }
-     
     }
-  }, [route]);
+    //navigation.setParams({ addNoteClicked: null });
+  }, [route.params]);
 
   //const { AddNoteClicked } = route.params;
   //if this screen has route props
@@ -69,7 +67,15 @@ const NoteScreen = ({ route, navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ margin: 10 }}>
-        <Text style={styles.headerText}>Notes</Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={styles.headerText}>Notes</Text>
+          <Ionicons
+            name="log-out"
+            size={27}
+            color={colors.accent}
+            style = {{marginVertical:10}}
+          />
+        </View>
         <View style={styles.pinnedParent}>
           <Text style={styles.emptySubText}>All notes</Text>
         </View>

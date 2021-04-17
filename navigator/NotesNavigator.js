@@ -95,7 +95,7 @@ export const NoteTabBar = () => {
                   navigation.navigate({
                     name: "Notes",
                     params: {
-                      addNoteClicked: "true",
+                      addNoteClicked: true,
                     },
                   })
                 }
