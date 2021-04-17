@@ -4,35 +4,32 @@ import { useDispatch, useSelector } from "react-redux";
 import * as noteActions from "../../store/actions/note";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { fontsMapper } from "../../constants";
+import AddEditNoteModal from "../../components/AddEditNoteModal";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const IconGroup = ({ onPinPress, onDeletePress, onEditPress }) => {
   return (
     <View style={{ flexDirection: "row" }}>
-      <FontAwesome
-        name="edit"
-        color="white"
-        size={26}
-        style={{ marginRight: 10 }}
-        onPress={onEditPress}
-      />
-      <MaterialCommunityIcons
-        name="pin"
-        color="white"
-        size={26}
-        style={{ marginRight: 10 }}
-        onPress={onPinPress}
-      />
-      <MaterialCommunityIcons
-        name="delete"
-        color="white"
-        size={26}
-        onPress={onDeletePress}
-      />
+      <TouchableOpacity onPress={onEditPress} style={{ marginRight: 10 }}>
+        <FontAwesome name="edit" color="white" size={26} />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onPinPress} style={{ marginRight: 10 }}>
+        <MaterialCommunityIcons
+          name="pin"
+          color="white"
+          size={26}
+          onPress={onPinPress}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onDeletePress}>
+        <MaterialCommunityIcons name="delete" color="white" size={26} />
+      </TouchableOpacity>
     </View>
   );
 };
 const PreviewNoteScreen = ({ route, navigation }) => {
   const [error, setError] = useState();
+  const [showModal, setShowModal] = useState(false);
   const { noteId } = route.params;
   const dispatch = useDispatch();
   const previewedNote = useSelector((state) => state.notes.curPreviewedNote);
@@ -54,23 +51,35 @@ const PreviewNoteScreen = ({ route, navigation }) => {
     },
     [dispatch]
   );
+  const handleNoteDelete = () => {};
+  const handleNotePin = () => {};
+
+  const navigateToEditNoteScreen = useCallback(() => {}, []);
 
   return (
     <ScrollView style={styles.container}>
       <SafeAreaView style={styles.subContainer}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <FontAwesome
-            name="arrow-left"
-            color="white"
-            size={26}
+          <TouchableOpacity
             onPress={() => navigation.goBack()}
+            activeOpacity={0.9}
+          >
+            <FontAwesome name="arrow-left" color="white" size={26} />
+          </TouchableOpacity>
+          <IconGroup
+            onEditPress={() => setShowModal(true)}
+            onDeletePress={() => console.log("deleted")}
+            onPinPress={() => console.log("pinned")}
           />
-          <IconGroup />
         </View>
         <View style={styles.subContainer}>
           <Text style={styles.preTitle}>{previewedNote.title}</Text>
           <Text style={styles.preContent}>{previewedNote.content}</Text>
         </View>
+        <AddEditNoteModal
+          showModal={showModal}
+          onSwipeComplete={() => setShowModal(false)}
+        />
       </SafeAreaView>
     </ScrollView>
   );

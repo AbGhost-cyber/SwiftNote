@@ -15,20 +15,43 @@ import { Ionicons } from "@expo/vector-icons";
 import NoteItem from "../../components/NoteItem";
 import * as noteActions from "../../store/actions/note";
 import { colors, fontsMapper } from "../../constants/index";
+import AddEditNoteModal from "../../components/AddEditNoteModal";
+import { set } from "react-native-reanimated";
 
 const { width } = Dimensions.get("window");
 
-const NoteScreen = ({ navigation }) => {
+const NoteScreen = ({ route, navigation }) => {
+  const [showAddNoteModal, setShowAddNoteModal] = useState(false);
   const dispatch = useDispatch();
   const notes = useSelector((state) => state.notes.notes);
+
   const wWidth = (width - 15 * 2 - 7) / 2;
   const notesIsEmpty = notes.length === 0;
+
   useEffect(() => {
     const fetchNotes = async () => {
       dispatch(noteActions.getAllNotes());
     };
     fetchNotes();
   }, [dispatch]);
+
+  useEffect(() => {
+    handleAddNoteClick();
+  }, [route.params]);
+
+  const handleAddNoteClick = useCallback(() => {
+    if (route.params) {
+      const { AddNoteClicked } = route.params;
+      if(AddNoteClicked !== null){
+        setShowAddNoteModal(true);
+        console.log("clicked");
+      }
+     
+    }
+  }, [route]);
+
+  //const { AddNoteClicked } = route.params;
+  //if this screen has route props
 
   // const handleAddNote = useCallback(async () => {
   //   try {
@@ -110,6 +133,10 @@ const NoteScreen = ({ navigation }) => {
           </Text>
         </View>
       )}
+      <AddEditNoteModal
+        showModal={showAddNoteModal}
+        onSwipeComplete={() => setShowAddNoteModal(false)}
+      />
     </SafeAreaView>
   );
 };

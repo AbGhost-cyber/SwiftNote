@@ -11,14 +11,13 @@ import React from "react";
 import SignUpScreen from "../screens/auth/SignUpScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import NoteScreen from "../screens/note/NoteScreen";
-import EditNoteScreen from "../screens/note/EditNoteScreen";
 import PreviewNoteScreen from "../screens/note/PreviewNoteScreen";
 import LogoutScreen from "../screens/LogoutScreen";
 import SearchScreen from "../screens/SearchScreen";
 import { IS_IPHONE_X } from "../utils/utils";
-import { EmptyScreen } from "../screens/EmptyScreen";
 import TabBarButton from "../components/TabBarButton";
 import { colors, fontsMapper } from "../constants";
+import AddEditNoteModal from "../components/AddEditNoteModal";
 
 const Stack = createStackNavigator();
 const BottomBar = createBottomTabNavigator();
@@ -31,7 +30,7 @@ export const StackNav = () => {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="NoteMainActivity" component={NoteTabBar} />
         <Stack.Screen name="PreviewNote" component={PreviewNoteScreen} />
-        <Stack.Screen name="EditNote" component={EditNoteScreen} />
+        <Stack.Screen name="Log out" component={LogoutScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -84,6 +83,7 @@ export const NoteTabBar = () => {
       />
       <BottomBar.Screen
         name="Add Note"
+        component={NoteScreen}
         options={({ navigation }) => {
           return {
             tabBarButton: (props) => (
@@ -91,14 +91,19 @@ export const NoteTabBar = () => {
                 bgColor="white"
                 showTab
                 {...props}
-                onPress={() => navigation.navigate("EditNote")}
+                onPress={() =>
+                  navigation.navigate({
+                    name: "Notes",
+                    params: {
+                      addNoteClicked: "true",
+                    },
+                  })
+                }
               />
             ),
           };
         }}
-      >
-        {(props) => <NoteScreen {...props} />}
-      </BottomBar.Screen>
+      />
       <BottomBar.Screen
         name="Messages"
         options={{
