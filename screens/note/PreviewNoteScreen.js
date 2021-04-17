@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as noteActions from "../../store/actions/note";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { fontsMapper } from "../../constants";
-import AddEditNoteModal from "../../components/AddEditNoteModal";
+import AddEditNoteModal from "../modals/AddEditNoteModal";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 const IconGroup = ({ onPinPress, onDeletePress, onEditPress }) => {
@@ -67,7 +67,7 @@ const PreviewNoteScreen = ({ route, navigation }) => {
             <FontAwesome name="arrow-left" color="white" size={26} />
           </TouchableOpacity>
           <IconGroup
-            onEditPress={() => setShowModal(true)}
+            onEditPress={() => navigation.navigate("AddNoteModal")}
             onDeletePress={() => console.log("deleted")}
             onPinPress={() => console.log("pinned")}
           />
@@ -76,10 +76,6 @@ const PreviewNoteScreen = ({ route, navigation }) => {
           <Text style={styles.preTitle}>{previewedNote.title}</Text>
           <Text style={styles.preContent}>{previewedNote.content}</Text>
         </View>
-        <AddEditNoteModal
-          showModal={showModal}
-          onSwipeComplete={() => setShowModal(false)}
-        />
       </SafeAreaView>
     </ScrollView>
   );

@@ -8,14 +8,16 @@ import {
   Text,
   Button,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
 import * as SecureStore from "expo-secure-store";
-import { Ionicons,MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import NoteItem from "../../components/NoteItem";
 import * as noteActions from "../../store/actions/note";
 import { colors, fontsMapper } from "../../constants/index";
-import AddEditNoteModal from "../../components/AddEditNoteModal";
+import AddEditNoteModal from "../modals/AddEditNoteModal";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const { width } = Dimensions.get("window");
 
@@ -45,7 +47,7 @@ const NoteScreen = ({ route, navigation }) => {
         setShowAddNoteModal(true);
       }
     }
-    //navigation.setParams({ addNoteClicked: null });
+    //navigation.setParams({ addNoteClosed: null });
   }, [route.params]);
 
   //const { AddNoteClicked } = route.params;
@@ -66,15 +68,18 @@ const NoteScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ margin: 10 }}>
+      <StatusBar style="light" />
+      <View style={{ margin: 10, marginTop: 30 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={styles.headerText}>Notes</Text>
-          <Ionicons
-            name="log-out"
-            size={27}
-            color={colors.accent}
-            style = {{marginVertical:10}}
-          />
+          <TouchableOpacity>
+            <Ionicons
+              name="log-out"
+              size={27}
+              color={colors.accent}
+              style={{ marginVertical: 10 }}
+            />
+          </TouchableOpacity>
         </View>
         <View style={styles.pinnedParent}>
           <Text style={styles.emptySubText}>All notes</Text>
@@ -139,15 +144,21 @@ const NoteScreen = ({ route, navigation }) => {
           </Text>
         </View>
       )}
-      <AddEditNoteModal
-        showModal={showAddNoteModal}
-        onSwipeComplete={() => setShowAddNoteModal(false)}
-      />
     </SafeAreaView>
   );
 };
 
 export default NoteScreen;
+
+// <AddEditNoteModal
+//         showModal={showAddNoteModal}
+//         onSwipeComplete={() => {
+//           setShowAddNoteModal(false);
+//           navigation.setParams({
+//             addNoteClicked: false
+//           });
+//         }}
+//       />
 
 const styles = StyleSheet.create({
   container: {

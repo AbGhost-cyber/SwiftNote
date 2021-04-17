@@ -9,7 +9,7 @@ import AppLoading from "expo-app-loading";
 import authReducer from "./store/reducer/auth";
 import noteReducer from "./store/reducer/note";
 import { NavigationContainer } from "@react-navigation/native";
-import { StackNav, NoteTabBar } from "./navigator/NotesNavigator";
+import { StackNav, NoteTabBar, RootStackNav } from "./navigator/NotesNavigator";
 
 enableScreens();
 
@@ -39,9 +39,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <StackNav />
+      <RootStackNav />
     </Provider>
   );
 }
-
-<NoteTabBar barColor="#F6F7EB" />;

@@ -17,26 +17,52 @@ import SearchScreen from "../screens/SearchScreen";
 import { IS_IPHONE_X } from "../utils/utils";
 import TabBarButton from "../components/TabBarButton";
 import { colors, fontsMapper } from "../constants";
-import AddEditNoteModal from "../components/AddEditNoteModal";
+import AddEditNoteModal from "../screens/modals/AddEditNoteModal";
 
 const Stack = createStackNavigator();
+const RootStack = createStackNavigator();
 const BottomBar = createBottomTabNavigator();
 
-export const StackNav = () => {
+const StackNav = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="NoteMainActivity" component={NoteTabBar} />
+      <Stack.Screen name="PreviewNote" component={PreviewNoteScreen} />
+      <Stack.Screen name="Log out" component={LogoutScreen} />
+    </Stack.Navigator>
+  );
+};
+
+export const RootStackNav = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="NoteMainActivity" component={NoteTabBar} />
-        <Stack.Screen name="PreviewNote" component={PreviewNoteScreen} />
-        <Stack.Screen name="Log out" component={LogoutScreen} />
-      </Stack.Navigator>
+      <RootStack.Navigator mode="modal">
+        <RootStack.Screen
+          name="Main"
+          component={StackNav}
+          options={{ headerShown: false }}
+        />
+        <RootStack.Screen
+          name="AddNoteModal"
+          component={AddEditNoteModal}
+          options={{
+            headerShown: false,
+            cardStyle: {
+              borderTopRightRadius: 10,
+              marginTop: 90,
+              backgroundColor: "#252525",
+              borderTopLeftRadius: 10,
+            },
+          }}
+        />
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 };
 
-export const NoteTabBar = () => {
+const NoteTabBar = () => {
   return (
     <BottomBar.Navigator
       tabBar={(props) => (
@@ -59,6 +85,7 @@ export const NoteTabBar = () => {
           fontFamily: fontsMapper.pro_sans,
           fontSize: 12,
         },
+        showLabel: false,
       }}
     >
       <BottomBar.Screen
@@ -84,21 +111,21 @@ export const NoteTabBar = () => {
       <BottomBar.Screen
         name="Add Note"
         component={NoteScreen}
-        options={({ navigation }) => {
+        options={({ navigation, route }) => {
           return {
             tabBarButton: (props) => (
               <TabBarButton
                 bgColor="white"
                 showTab
-                {...props}
-                onPress={() =>
-                  navigation.navigate({
-                    name: "Notes",
-                    params: {
-                      addNoteClicked: true,
-                    },
-                  })
-                }
+                onPress={() => {
+                  // navigation.navigate({
+                  //   name: "Notes",
+                  //   params: {
+                  //     addNoteClicked: true,
+                  //   },
+                  // });
+                  navigation.navigate("AddNoteModal");
+                }}
               />
             ),
           };

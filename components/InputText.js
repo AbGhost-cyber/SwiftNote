@@ -6,6 +6,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
+import { color } from "react-native-reanimated";
 
 import { colors, fontsMapper } from "../constants/index";
 import TextInputError from "./TextInputError";
@@ -33,6 +34,10 @@ const inputReducer = (state, action) => {
 
 const InputText = (props) => {
   const {
+    multilineEnabled,
+    inputFocusColor,
+    inputUnFocusColor,
+    placeholderColor,
     holder,
     onInputChange,
     id,
@@ -44,6 +49,7 @@ const InputText = (props) => {
     max,
     email,
     returnKeyType,
+    height,
   } = props;
 
   const [isFocused, setIsFocused] = useState(false);
@@ -94,8 +100,13 @@ const InputText = (props) => {
         style={[
           styles.input,
           isFocused
-            ? { borderColor: colors.accent }
-            : { borderColor: colors.primary },
+            ? { borderColor: inputFocusColor ? inputFocusColor : colors.accent }
+            : {
+                borderColor: inputUnFocusColor
+                  ? inputUnFocusColor
+                  : colors.primary,
+              },
+          { height: height },
         ]}
         onChangeText={textChangeHandler}
         value={inputState.value}
@@ -105,10 +116,13 @@ const InputText = (props) => {
             ? `re-enter your password`
             : `input your ${holder.toLowerCase()}`
         }
-        placeholderTextColor={colors.accent}
+        placeholderTextColor={
+          placeholderColor ? placeholderColor : colors.accent
+        }
         onBlur={lostFocusHandler}
         returnKeyType={returnKeyType}
         onFocus={() => setIsFocused(true)}
+        multiline={multilineEnabled}
       />
       <TextInputError
         showError={!inputState.isValid && inputState.touched}
