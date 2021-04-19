@@ -176,8 +176,8 @@ export const deleteNote = (id) => {
           }
         );
         const responseData = await response.json();
-        console.log(responseData);
-        if (response.ok) {
+        
+        if (response.ok && responseData.success) {
           dispatch({ type: DELETE_NOTE, id });
         } else {
           throw new Error("Something went wrong 😔");

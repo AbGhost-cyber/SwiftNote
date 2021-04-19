@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useCallback } from "react";
+import React, { useState, useReducer, useCallback, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   Dimensions,
+  Keyboard,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -40,6 +41,8 @@ const AddEditNoteModal = ({ navigation, route }) => {
   const [error, setError] = useState();
   const [sucess, setSucess] = useState();
   const [showIndicator, setShowIndicator] = useState(false);
+  const titleRef = useRef(null);
+  const contentRef = useRef(null);
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
@@ -101,7 +104,7 @@ const AddEditNoteModal = ({ navigation, route }) => {
           setSucess(true);
           setTimeout(() => {
             navigation.goBack();
-          }, 500);
+          }, 100);
         }
       } catch (error) {
         setError(error.message);
@@ -122,6 +125,12 @@ const AddEditNoteModal = ({ navigation, route }) => {
     [dispatchFormState, editedNote]
   );
 
+  const handleOnSubmitEdit = () => {
+    if (contentRef) {
+      contentRef.current.focus();
+    }
+  };
+
   return (
     <View style={styles.centeredView}>
       <View style={{ alignItems: "flex-end", margin: 10 }}>
@@ -137,6 +146,10 @@ const AddEditNoteModal = ({ navigation, route }) => {
       <KeyboardAwareScrollView>
         <View style={{ marginHorizontal: 5 }}>
           <InputText
+            autoFocus={true}
+            innerRef={(ref) => {
+              titleRef.current = ref;
+            }}
             id="title"
             holder="Title"
             errorText="please enter a valid text"
@@ -150,8 +163,12 @@ const AddEditNoteModal = ({ navigation, route }) => {
             initValue={editedNote ? editedNote.title : ""}
             initValid={!!editedNote}
             minLength={4}
+            onSubmitEditing={() => handleOnSubmitEdit()}
           />
           <InputText
+            innerRef={(ref) => {
+              contentRef.current = ref;
+            }}
             id="content"
             holder="Content"
             inputFocusColor="white"
@@ -165,7 +182,7 @@ const AddEditNoteModal = ({ navigation, route }) => {
             initValue={editedNote ? editedNote.content : ""}
             initValid={!!editedNote}
             minLength={4}
-            //blurOnSubmit={true}
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
           <ColorPalette
             onSelectColor={(color) => setColor(color)}

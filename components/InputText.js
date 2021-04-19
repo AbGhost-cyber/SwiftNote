@@ -51,6 +51,8 @@ const InputText = (props) => {
     email,
     returnKeyType,
     height,
+    onSubmitEditing,
+    innerRef,
   } = props;
 
   const [isFocused, setIsFocused] = useState(false);
@@ -97,6 +99,7 @@ const InputText = (props) => {
     <View style={styles.container}>
       <Text style={styles.holder}>{holder}</Text>
       <TextInput
+        ref={innerRef}
         {...props}
         style={[
           styles.input,
@@ -124,9 +127,10 @@ const InputText = (props) => {
         returnKeyType={returnKeyType}
         onFocus={() => setIsFocused(true)}
         multiline={multilineEnabled}
-        onSubmitEditing={() => {
-          Keyboard.dismiss();
-        }}
+        // onSubmitEditing={() => {
+        //   Keyboard.dismiss();
+        // }}
+        onSubmitEditing={onSubmitEditing}
       />
       <TextInputError
         showError={!inputState.isValid && inputState.touched}

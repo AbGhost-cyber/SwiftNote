@@ -101,7 +101,6 @@ const NoteScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
       <View style={{ margin: 10, marginTop: 30 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={styles.headerText}>Notes</Text>
@@ -118,10 +117,8 @@ const NoteScreen = ({ route, navigation }) => {
           <Text style={styles.emptySubText}>All notes</Text>
         </View>
         <ScrollView>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-around" }}
-          >
-            <View>
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ marginRight: 10 }}>
               {notes
                 .filter((_, i) => i % 2 !== 0)
                 .map((item, index) => (
@@ -200,7 +197,7 @@ const styles = StyleSheet.create({
     color: "#ccc",
   },
   pinnedParent: {
-    marginTop: 30,
+    marginTop: 10,
     marginStart: 7,
   },
 });

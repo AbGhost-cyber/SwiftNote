@@ -1,12 +1,19 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import * as noteActions from "../../store/actions/note";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
+
+import * as noteActions from "../../store/actions/note";
 import { colors, fontsMapper } from "../../constants";
-import AddEditNoteModal from "../modals/AddEditNoteModal";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import CustomButton from "../../components/Button";
+import { StatusBar } from "expo-status-bar";
 
 const IconGroup = ({ onPinPress, onDeletePress, onEditPress }) => {
   return (
@@ -52,18 +59,21 @@ const PreviewNoteScreen = ({ route, navigation }) => {
     [dispatch]
   );
   const handleNoteDelete = useCallback(async () => {
+    setError(null);
     try {
       await dispatch(noteActions.deleteNote(noteId));
+      navigation.goBack();
     } catch (error) {
       setError(error.message);
     }
-  }, [previewedNote, noteId]);
-  
+  }, [previewedNote, noteId, dispatch]);
+
   const handleNotePin = () => {};
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.subContainer}>
+        <StatusBar style="light" />
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -80,7 +90,7 @@ const PreviewNoteScreen = ({ route, navigation }) => {
                 },
               })
             }
-            onDeletePress={() => console.log("deleted")}
+            onDeletePress={() => handleNoteDelete()}
             onPinPress={() => console.log("pinned")}
           />
         </View>

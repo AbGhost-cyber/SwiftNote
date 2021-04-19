@@ -4,7 +4,7 @@ import {
   Text,
   View,
   FlatList,
-  TouchableOpacity,
+  VirtualizedList,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -48,7 +48,7 @@ const ColorPalette = ({ onSelectColor, noteColor }) => {
   };
   return (
     <FlatList
-      initialNumToRender={60}
+      initialNumToRender={90}
       ref={(ref) => {
         flatListRef.current = ref;
       }}
@@ -66,10 +66,13 @@ const ColorPalette = ({ onSelectColor, noteColor }) => {
           />
         );
       }}
-      onScrollToIndexFailed={info => {
-        const wait = new Promise(resolve => setTimeout(resolve, 500));
+      onScrollToIndexFailed={(info) => {
+        const wait = new Promise((resolve) => setTimeout(resolve, 500));
         wait.then(() => {
-          flatListRef.current?.scrollToIndex({ index: info.index, animated: true });
+          flatListRef.current?.scrollToIndex({
+            index: info.index,
+            animated: true,
+          });
         });
       }}
     />
