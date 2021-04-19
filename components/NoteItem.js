@@ -8,28 +8,32 @@ import {
 } from "react-native";
 import moment from "moment";
 import { colors, fontsMapper } from "../constants";
+import { IS_IPHONE_X } from "../utils/utils";
 
 const formattedDate = (timeInMillis) => {
   return moment(timeInMillis).fromNow();
 };
 const NoteItem = (props) => {
-  const { width, aspectRatio, isSmall, note, color, onNotePress } = props;
+  const { width, aspectRatio, isSmall, note, onNotePress } = props;
   return (
     <TouchableOpacity activeOpacity={0.9} onPress={onNotePress}>
       <View
         style={[
           styles.parent,
-          { backgroundColor: color, width, height: width * aspectRatio },
+          { backgroundColor: note.color, width, height: width * aspectRatio },
         ]}
       >
         <Text
-          numberOfLines={isSmall ? 2 : 4}
+          numberOfLines={isSmall ? 2 : IS_IPHONE_X ? 4 : 3}
           style={{ ...styles.title, width: width }}
         >
           {note.title}
         </Text>
         {!isSmall && (
-          <Text numberOfLines={5} style={[styles.subText, { width: width }]}>
+          <Text
+            numberOfLines={IS_IPHONE_X ? 4 : 3}
+            style={[styles.subText, { width: width }]}
+          >
             {note.content}
           </Text>
         )}
@@ -50,7 +54,7 @@ const styles = StyleSheet.create({
   title: {
     justifyContent: "flex-start",
     color: colors.primary,
-    fontSize: 21,
+    fontSize: 20,
     paddingHorizontal: 20,
     fontFamily: fontsMapper.pro_sans_bold,
   },
@@ -74,6 +78,6 @@ const styles = StyleSheet.create({
     fontFamily: fontsMapper.pro_sans,
     fontWeight: "600",
     color: colors.primary,
-    fontSize: 18,
+    fontSize: 16.5,
   },
 });

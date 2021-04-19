@@ -5,6 +5,7 @@ import {
   View,
   TextInput,
   KeyboardAvoidingView,
+  Keyboard,
 } from "react-native";
 import { color } from "react-native-reanimated";
 
@@ -123,6 +124,9 @@ const InputText = (props) => {
         returnKeyType={returnKeyType}
         onFocus={() => setIsFocused(true)}
         multiline={multilineEnabled}
+        onSubmitEditing={() => {
+          Keyboard.dismiss();
+        }}
       />
       <TextInputError
         showError={!inputState.isValid && inputState.touched}

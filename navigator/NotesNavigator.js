@@ -8,6 +8,7 @@ import {
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import React from "react";
 
+
 import SignUpScreen from "../screens/auth/SignUpScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import NoteScreen from "../screens/note/NoteScreen";

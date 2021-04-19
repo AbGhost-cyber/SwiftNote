@@ -12,7 +12,8 @@ export const fontsMapper = {
   pro_sans_bold: "product-sans-bold",
 };
 
-export const SWIFT_SERVER_URL = "http://172.20.10.4:8082";
+// http://172.20.10.4:8082
+export const SWIFT_SERVER_URL = "http://192.168.1.105:8082";
 
 export const authStyle = StyleSheet.create({
   container: {

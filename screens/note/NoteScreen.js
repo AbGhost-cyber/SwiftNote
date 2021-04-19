@@ -7,22 +7,22 @@ import {
   SafeAreaView,
   Text,
   Button,
+  TouchableOpacity,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
-import * as SecureStore from "expo-secure-store";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 import NoteItem from "../../components/NoteItem";
 import * as noteActions from "../../store/actions/note";
 import { colors, fontsMapper } from "../../constants/index";
-import AddEditNoteModal from "../modals/AddEditNoteModal";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import CustomButton from "../../components/Button";
+import { IS_IPHONE_X } from "../../utils/utils";
 
 const { width } = Dimensions.get("window");
 
 const NoteScreen = ({ route, navigation }) => {
-  const [showAddNoteModal, setShowAddNoteModal] = useState(false);
+  const [error, setError] = useState();
   const dispatch = useDispatch();
   const notes = useSelector((state) => state.notes.notes);
 
@@ -30,15 +30,21 @@ const NoteScreen = ({ route, navigation }) => {
   const notesIsEmpty = notes.length === 0;
 
   useEffect(() => {
-    const fetchNotes = async () => {
-      dispatch(noteActions.getAllNotes());
-    };
     fetchNotes();
-  }, [dispatch]);
+  }, [dispatch, notes]);
 
   useEffect(() => {
     handleAddNoteClick();
   }, [route.params]);
+
+  const fetchNotes = useCallback(async () => {
+    setError(null);
+    try {
+      await dispatch(noteActions.getAllNotes());
+    } catch (error) {
+      setError(error.message);
+    }
+  }, [dispatch]);
 
   const handleAddNoteClick = useCallback(() => {
     if (route.params) {
@@ -65,6 +71,33 @@ const NoteScreen = ({ route, navigation }) => {
   //     console.log(error.message);
   //   }
   // }, [dispatch]);
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar style="light" />
+        <View style={styles.emptyNotes}>
+          <Ionicons color={colors.accent} size={130} name="ios-cloud-offline" />
+          <Text style={styles.emptySubText}>{error}</Text>
+          <CustomButton text="Retry Connection" onPress={() => fetchNotes()} />
+        </View>
+      </SafeAreaView>
+    );
+  }
+  if (notesIsEmpty) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar style="light" />
+        <View style={styles.emptyNotes}>
+          <Ionicons color={colors.accent} size={130} name="file-tray-stacked" />
+          <Text style={styles.emptyNotesText}>No Note Added yet 🙂</Text>
+          <Text style={styles.emptySubText}>
+            click the + icon below your thumb to add one
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -96,9 +129,10 @@ const NoteScreen = ({ route, navigation }) => {
                     key={item.id}
                     note={item}
                     width={wWidth}
-                    aspectRatio={index % 2 !== 0 ? 120 / 165 : 1}
+                    aspectRatio={
+                      index % 2 !== 0 ? 120 / 165 : IS_IPHONE_X ? 1.4 : 1.1
+                    }
                     isSmall={index % 2 !== 0}
-                    color={item.color}
                     onNotePress={() =>
                       navigation.navigate({
                         name: "PreviewNote",
@@ -135,30 +169,11 @@ const NoteScreen = ({ route, navigation }) => {
           </View>
         </ScrollView>
       </View>
-      {notesIsEmpty && (
-        <View style={styles.emptyNotes}>
-          <Ionicons color={colors.accent} size={130} name="file-tray-stacked" />
-          <Text style={styles.emptyNotesText}>No Note Added yet 🙂</Text>
-          <Text style={styles.emptySubText}>
-            click the + icon below your thumb to add one
-          </Text>
-        </View>
-      )}
     </SafeAreaView>
   );
 };
 
 export default NoteScreen;
-
-// <AddEditNoteModal
-//         showModal={showAddNoteModal}
-//         onSwipeComplete={() => {
-//           setShowAddNoteModal(false);
-//           navigation.setParams({
-//             addNoteClicked: false
-//           });
-//         }}
-//       />
 
 const styles = StyleSheet.create({
   container: {

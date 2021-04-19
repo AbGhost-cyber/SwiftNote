@@ -2,7 +2,8 @@ import {
   DELETE_NOTE,
   GET_ALL_NOTES,
   GET_NOTE,
-  UPSERT_NOTE,
+  INSERT_NOTE,
+  UPDATE_NOTE,
 } from "../actions/note";
 import Note from "../../model/Note";
 
@@ -18,7 +19,7 @@ export default (state = initialState, action) => {
         ...state,
         notes: action.notes,
       };
-    case UPSERT_NOTE:
+    case INSERT_NOTE:
       const note = new Note(
         action.noteData.title,
         action.noteData.content,
@@ -29,6 +30,23 @@ export default (state = initialState, action) => {
       return {
         ...state,
         notes: state.notes.concat(note),
+      };
+    case UPDATE_NOTE:
+      const noteIndex = state.notes.findIndex(
+        (note) => note.id === action.noteData.id
+      );
+      const updatedNote = new Note(
+        action.noteData.title,
+        action.noteData.content,
+        action.noteData.date,
+        action.noteData.owner,
+        action.noteData.id
+      );
+      const updatedNotes = [...state.notes];
+      updatedNotes[noteIndex] = updatedNote;
+      return {
+        ...state,
+        notes: updatedNotes,
       };
     case GET_NOTE:
       return {

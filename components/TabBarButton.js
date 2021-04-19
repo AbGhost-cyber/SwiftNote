@@ -16,7 +16,7 @@ const TabBarButton = ({ bgColor, showTab, ...props }) => {
     );
   } else {
       //view holder
-    return <View style={{ flex: 1, backgroundColor: "white" }}></View>;
+    return <View style={{ flex: 1, backgroundColor: "white" }}/>
   }
 };
 

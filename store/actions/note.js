@@ -1,4 +1,5 @@
-export const UPSERT_NOTE = "UPSERT_NOTE";
+export const INSERT_NOTE = "INSERT_NOTE";
+export const UPDATE_NOTE = "UPDATE_NOTE";
 export const DELETE_NOTE = "DELETE_NOTE";
 export const GET_ALL_NOTES = "GET_ALL_NOTES";
 export const GET_NOTE = "GET_NOTE";
@@ -63,7 +64,7 @@ export const getNoteById = (id) => {
         const responseData = await response.json();
         if (response.ok) {
           dispatch({ type: GET_NOTE, noteId: id, currentNote: responseData });
-        }else{
+        } else {
           throw new Error("an unknown error occurred 😔");
         }
       } else {
@@ -75,7 +76,7 @@ export const getNoteById = (id) => {
   };
 };
 
-export const upserNote = (title, content, date, owner, color, id) => {
+export const insertNote = (title, content, date, owner, color, id) => {
   return async (dispatch) => {
     try {
       let user_profile = await SecureStore.getItemAsync("user_profile");
@@ -100,7 +101,48 @@ export const upserNote = (title, content, date, owner, color, id) => {
         }
 
         dispatch({
-          type: UPSERT_NOTE,
+          type: INSERT_NOTE,
+          noteData: {
+            id,
+            title,
+            content,
+            date,
+            owner,
+            color,
+          },
+        });
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+};
+
+export const updatetNote = (title, content, date, owner, color, id) => {
+  return async (dispatch) => {
+    try {
+      let user_profile = await SecureStore.getItemAsync("user_profile");
+      if (user_profile) {
+        const user = JSON.parse(user_profile);
+        const response = await fetch(
+          `${SWIFT_SERVER_URL}/user/${user.uid}/note`,
+          {
+            method: "POST",
+            headers: new Headers({
+              Authorization:
+                "Basic " + encode(user.email + ":" + user.password),
+              "Content-Type": "application/json",
+            }),
+            body: JSON.stringify({ id, title, content, date, owner, color }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Something went wrong 😔");
+        }
+
+        dispatch({
+          type: UPDATE_NOTE,
           noteData: {
             id,
             title,

@@ -109,9 +109,6 @@ const LoginScreen = ({ navigation }) => {
           initValue={""}
           initValid={true}
           autoFocus={true}
-          onSubmitEditing={() => {
-            focusTextInput(formState.inputValues.password);
-          }}
         />
         <InputText
           holder="Password"

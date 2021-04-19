@@ -1,20 +1,127 @@
-import React, { useState } from "react";
+import React, { useState, useReducer, useCallback } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  Dimensions,
   TouchableOpacity,
+  Alert,
+  Dimensions,
 } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 import { colors, fontsMapper } from "../../constants";
 import CustomButton from "../../components/Button";
 import InputText from "../../components/InputText";
 import { Ionicons } from "@expo/vector-icons";
+import ColorPalette from "../../components/ColorPalette";
+import {
+  formReducer,
+  id,
+  FORM_INPUT_UPDATE,
+  authStyle,
+} from "../../constants/index";
+import * as noteActions from "../../store/actions/note";
+import SnackBar from "../../components/Snackbar";
+import * as SecureStore from "expo-secure-store";
 
-const { height } = Dimensions.get("window");
+const AddEditNoteModal = ({ navigation, route }) => {
+  let editedNote, _noteId;
+  const dispatch = useDispatch();
 
-// { showModal, onSwipeComplete }
-const AddEditNoteModal = ({ navigation }) => {
+  if (route.params) {
+    const { noteId } = route.params;
+    _noteId = noteId;
+    editedNote = useSelector((state) =>
+      state.notes.notes.find((note) => note.id === noteId)
+    );
+  }
+  const [color, setColor] = useState(editedNote ? editedNote.color : "");
+  const [error, setError] = useState();
+  const [sucess, setSucess] = useState();
+  const [showIndicator, setShowIndicator] = useState(false);
+
+  const [formState, dispatchFormState] = useReducer(formReducer, {
+    inputValues: {
+      title: editedNote ? editedNote.title : "",
+      content: editedNote ? editedNote.content : "",
+    },
+    inputValidities: {
+      title: editedNote ? true : false,
+      content: editedNote ? true : false,
+    },
+    formIsValid: editedNote ? true : false,
+  });
+
+  const submitHandler = useCallback(async () => {
+    if (!formState.formIsValid) {
+      Alert.alert("Wrong input", "Please check the errors in the form", [
+        { text: "Okay" },
+      ]);
+      return;
+    }
+    setError(null);
+    setShowIndicator(true);
+    const date = new Date();
+    if (editedNote) {
+      try {
+        await dispatch(
+          noteActions.updatetNote(
+            formState.inputValues.title,
+            formState.inputValues.content,
+            date.valueOf(),
+            editedNote.owner,
+            color,
+            _noteId
+          )
+        );
+        setSucess(true);
+        setTimeout(() => {
+          navigation.goBack();
+        }, 500);
+      } catch (error) {
+        setError(error.message);
+      }
+      setShowIndicator(false);
+    } else {
+      try {
+        let result = await SecureStore.getItemAsync("user_profile");
+        if (result) {
+          const user = JSON.parse(result);
+          await dispatch(
+            noteActions.insertNote(
+              formState.inputValues.title,
+              formState.inputValues.content,
+              date.valueOf(),
+              user.email,
+              color,
+              id
+            )
+          );
+          setSucess(true);
+          setTimeout(() => {
+            navigation.goBack();
+          }, 500);
+        }
+      } catch (error) {
+        setError(error.message);
+      }
+      setShowIndicator(false);
+    }
+  }, [dispatch, _noteId, formState, color, editedNote]);
+
+  const inputChangeHandler = useCallback(
+    (inputIdentifier, inputValue, inputValidity) => {
+      dispatchFormState({
+        type: FORM_INPUT_UPDATE,
+        value: inputValue,
+        isValid: inputValidity,
+        input: inputIdentifier,
+      });
+    },
+    [dispatchFormState, editedNote]
+  );
+
   return (
     <View style={styles.centeredView}>
       <View style={{ alignItems: "flex-end", margin: 10 }}>
@@ -27,23 +134,69 @@ const AddEditNoteModal = ({ navigation }) => {
           />
         </TouchableOpacity>
       </View>
-      <View style={{ marginHorizontal: 5 }}>
-        <InputText
-          holder="Title"
-          inputFocusColor="white"
-          inputUnFocusColor="#333333"
-          placeholderColor="#ccc"
-        />
-        <InputText
-          holder="Content"
-          inputFocusColor="white"
-          inputUnFocusColor="#333333"
-          placeholderColor="#ccc"
-          multilineEnabled
-          height={150}
-        />
-        <CustomButton bgColor={colors.accent} text="Create" />
-      </View>
+      <KeyboardAwareScrollView>
+        <View style={{ marginHorizontal: 5 }}>
+          <InputText
+            id="title"
+            holder="Title"
+            errorText="please enter a valid text"
+            inputFocusColor="white"
+            inputUnFocusColor="#333333"
+            placeholderColor="#ccc"
+            returnkeyType="next"
+            required
+            autoCorrect
+            onInputChange={inputChangeHandler}
+            initValue={editedNote ? editedNote.title : ""}
+            initValid={!!editedNote}
+            minLength={4}
+          />
+          <InputText
+            id="content"
+            holder="Content"
+            inputFocusColor="white"
+            inputUnFocusColor="#333333"
+            placeholderColor="#ccc"
+            multilineEnabled
+            height={150}
+            returnkeyType="done"
+            required
+            onInputChange={inputChangeHandler}
+            initValue={editedNote ? editedNote.content : ""}
+            initValid={!!editedNote}
+            minLength={4}
+            //blurOnSubmit={true}
+          />
+          <ColorPalette
+            onSelectColor={(color) => setColor(color)}
+            noteColor={editedNote ? editedNote.color : ""}
+          />
+          <CustomButton
+            bgColor={colors.accent}
+            text={editedNote ? "Update" : "Create"}
+            showProgIndicator={showIndicator}
+            onPress={() => submitHandler()}
+          />
+        </View>
+      </KeyboardAwareScrollView>
+      {error && (
+        <View style={authStyle.snackBarStyles}>
+          <SnackBar
+            message={error}
+            style={{ width: Dimensions.get("window").width }}
+            onDismiss={() => setError(null)}
+          />
+        </View>
+      )}
+      {sucess && (
+        <View style={authStyle.snackBarStyles}>
+          <SnackBar
+            message={editedNote ? "Noted updated 😉" : "Note Created 😉"}
+            style={{ width: Dimensions.get("window").width }}
+            onDismiss={() => setSucess(false)}
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -53,31 +206,5 @@ export default AddEditNoteModal;
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-  },
-  modalView: {
-    backgroundColor: "#ccc2",
-    borderTopEndRadius: 10,
-    borderTopRightRadius: 10,
-    padding: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 14,
-    elevation: 5,
-    justifyContent: "flex-start",
-    height: height / 1.7,
-  },
-  //   titleText: {
-  //     fontFamily: fontsMapper.pro_sans_bold,
-  //     fontSize: 21,
-  //     color: "#ccc",
-  //   },
-  descText: {
-    fontFamily: fontsMapper.pro_sans_bold,
-    fontSize: 21,
-    color: "#ccc",
   },
 });

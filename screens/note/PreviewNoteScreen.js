@@ -3,9 +3,10 @@ import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import * as noteActions from "../../store/actions/note";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
-import { fontsMapper } from "../../constants";
+import { colors, fontsMapper } from "../../constants";
 import AddEditNoteModal from "../modals/AddEditNoteModal";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import CustomButton from "../../components/Button";
 
 const IconGroup = ({ onPinPress, onDeletePress, onEditPress }) => {
   return (
@@ -29,7 +30,6 @@ const IconGroup = ({ onPinPress, onDeletePress, onEditPress }) => {
 };
 const PreviewNoteScreen = ({ route, navigation }) => {
   const [error, setError] = useState();
-  const [showModal, setShowModal] = useState(false);
   const { noteId } = route.params;
   const dispatch = useDispatch();
   const previewedNote = useSelector((state) => state.notes.curPreviewedNote);
@@ -38,7 +38,7 @@ const PreviewNoteScreen = ({ route, navigation }) => {
     if (noteId) {
       handleGetNote(noteId);
     }
-  }, [dispatch]);
+  }, [dispatch, previewedNote]);
   const handleGetNote = useCallback(
     async (id) => {
       setError(null);
@@ -51,14 +51,19 @@ const PreviewNoteScreen = ({ route, navigation }) => {
     },
     [dispatch]
   );
-  const handleNoteDelete = () => {};
+  const handleNoteDelete = useCallback(async () => {
+    try {
+      await dispatch(noteActions.deleteNote(noteId));
+    } catch (error) {
+      setError(error.message);
+    }
+  }, [previewedNote, noteId]);
+  
   const handleNotePin = () => {};
 
-  const navigateToEditNoteScreen = useCallback(() => {}, []);
-
   return (
-    <ScrollView style={styles.container}>
-      <SafeAreaView style={styles.subContainer}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.subContainer}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -67,7 +72,14 @@ const PreviewNoteScreen = ({ route, navigation }) => {
             <FontAwesome name="arrow-left" color="white" size={26} />
           </TouchableOpacity>
           <IconGroup
-            onEditPress={() => navigation.navigate("AddNoteModal")}
+            onEditPress={() =>
+              navigation.navigate({
+                name: "AddNoteModal",
+                params: {
+                  noteId: previewedNote.id,
+                },
+              })
+            }
             onDeletePress={() => console.log("deleted")}
             onPinPress={() => console.log("pinned")}
           />
@@ -76,8 +88,22 @@ const PreviewNoteScreen = ({ route, navigation }) => {
           <Text style={styles.preTitle}>{previewedNote.title}</Text>
           <Text style={styles.preContent}>{previewedNote.content}</Text>
         </View>
-      </SafeAreaView>
-    </ScrollView>
+        {error && (
+          <View style={styles.errorContainer}>
+            <MaterialCommunityIcons
+              name="cloud-off-outline"
+              size={130}
+              color={colors.accent}
+            />
+            <Text style={styles.errorText}>{error}</Text>
+            <CustomButton
+              text="Retry Connection"
+              onPress={() => handleGetNote(noteId)}
+            />
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -90,7 +116,7 @@ const styles = StyleSheet.create({
   },
   subContainer: {
     margin: 15,
-    marginTop: 40,
+    marginTop: 15,
   },
   preTitle: {
     fontFamily: fontsMapper.pro_sans_bold,
@@ -103,5 +129,16 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: "#ccc",
     marginTop: 20,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 70,
+  },
+  errorText: {
+    fontFamily: fontsMapper.pro_sans,
+    color: "white",
+    fontSize: 17,
   },
 });
