@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
+import { useIsFocused } from "@react-navigation/native";
 
 import * as noteActions from "../../store/actions/note";
 import { colors, fontsMapper } from "../../constants";
@@ -18,16 +19,11 @@ import { StatusBar } from "expo-status-bar";
 const IconGroup = ({ onPinPress, onDeletePress, onEditPress }) => {
   return (
     <View style={{ flexDirection: "row" }}>
-      <TouchableOpacity onPress={onEditPress} style={{ marginRight: 10 }}>
+      <TouchableOpacity onPress={onEditPress} style={{ marginRight: 15 }}>
         <FontAwesome name="edit" color="white" size={26} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onPinPress} style={{ marginRight: 10 }}>
-        <MaterialCommunityIcons
-          name="pin"
-          color="white"
-          size={26}
-          onPress={onPinPress}
-        />
+      <TouchableOpacity onPress={onPinPress} style={{ marginRight: 15 }}>
+        <MaterialCommunityIcons name="pin" color="white" size={26} />
       </TouchableOpacity>
       <TouchableOpacity onPress={onDeletePress}>
         <MaterialCommunityIcons name="delete" color="white" size={26} />
@@ -39,13 +35,17 @@ const PreviewNoteScreen = ({ route, navigation }) => {
   const [error, setError] = useState();
   const { noteId } = route.params;
   const dispatch = useDispatch();
+
+  //helps reload the screen on navigation
+  const isFocused = useIsFocused();
+
   const previewedNote = useSelector((state) => state.notes.curPreviewedNote);
 
   useEffect(() => {
     if (noteId) {
       handleGetNote(noteId);
     }
-  }, [dispatch, previewedNote]);
+  }, [dispatch, isFocused]);
   const handleGetNote = useCallback(
     async (id) => {
       setError(null);
@@ -68,7 +68,15 @@ const PreviewNoteScreen = ({ route, navigation }) => {
     }
   }, [previewedNote, noteId, dispatch]);
 
-  const handleNotePin = () => {};
+  const handleNotePin = useCallback(async () => {
+    setError(null);
+    try {
+      await dispatch(noteActions.pinNote(noteId));
+      navigation.goBack()
+    } catch (error) {
+      setError(error.message);
+    }
+  }, [previewedNote, noteId, dispatch]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -91,7 +99,7 @@ const PreviewNoteScreen = ({ route, navigation }) => {
               })
             }
             onDeletePress={() => handleNoteDelete()}
-            onPinPress={() => console.log("pinned")}
+            onPinPress={() => handleNotePin()}
           />
         </View>
         <View style={styles.subContainer}>

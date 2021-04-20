@@ -1,5 +1,4 @@
-import { StyleSheet, findNodeHandle } from "react-native";
-import TextInputState from "react-native";
+import { StyleSheet } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
 export const colors = {
@@ -12,8 +11,9 @@ export const fontsMapper = {
   pro_sans_bold: "product-sans-bold",
 };
 
+//http://192.168.1.105:8082
 // http://172.20.10.4:8082
-export const SWIFT_SERVER_URL = "http://192.168.1.105:8082";
+export const SWIFT_SERVER_URL = "http://172.20.10.4:8082";
 
 export const authStyle = StyleSheet.create({
   container: {
@@ -68,13 +68,7 @@ export const formReducer = (state, action) => {
   return state;
 };
 
-export function focusTextInput(node) {
-  try {
-    TextInputState.focusTextInput(findNodeHandle(node));
-  } catch (e) {
-    console.log("Couldn't focus text input: ", e.message);
-  }
-}
+
 
 export const validatePasswords = (pw1, pw2) => {
   return pw1 === pw2;

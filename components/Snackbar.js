@@ -10,12 +10,11 @@ import {
 } from "react-native";
 import { colors, fontsMapper } from "../constants";
 
-const { height, width } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 //time after which snack bar will be self dismissed!
 const DEFAULT_TIMEOUT = 10;
 //snack bar will be dismmised if user swipes beyound DISMISS_THRESHOLD% of screen width
 const DISMISS_THRESHOLD = 0.5;
-
 
 
 class SnackBar extends Component {

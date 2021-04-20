@@ -8,7 +8,6 @@ import {
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import React from "react";
 
-
 import SignUpScreen from "../screens/auth/SignUpScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import NoteScreen from "../screens/note/NoteScreen";
@@ -102,7 +101,7 @@ const NoteTabBar = () => {
         name="Profile"
         component={NoteScreen}
         options={{
-          tabBarIcon: ({ color }) => null,
+          tabBarIcon: () => null,
           tabBarLabel: () => {
             return null;
           },
@@ -112,19 +111,13 @@ const NoteTabBar = () => {
       <BottomBar.Screen
         name="Add Note"
         component={NoteScreen}
-        options={({ navigation, route }) => {
+        options={({ navigation }) => {
           return {
             tabBarButton: (props) => (
               <TabBarButton
                 bgColor="white"
                 showTab
                 onPress={() => {
-                  // navigation.navigate({
-                  //   name: "Notes",
-                  //   params: {
-                  //     addNoteClicked: true,
-                  //   },
-                  // });
                   navigation.navigate("AddNoteModal");
                 }}
               />

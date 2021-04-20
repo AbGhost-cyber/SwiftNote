@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  VirtualizedList,
-} from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import COLORS from "../data/colors";

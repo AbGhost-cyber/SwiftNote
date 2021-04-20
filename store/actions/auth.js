@@ -1,5 +1,4 @@
 import { save } from "../../constants";
-
 export const SIGN_UP = "SIGN_UP";
 export const LOGIN = "LOGIN";
 import { SWIFT_SERVER_URL } from "../../constants/index";
@@ -30,8 +29,8 @@ export const signUp = (email, password, username) => {
             username,
           },
         });
-        console.log(responseData.id + "signup");
-        //save user data to encrypted secure store
+
+        //SAVE TO SECURE STORAGE
         save(
           "user_profile",
           JSON.stringify({
@@ -75,7 +74,7 @@ export const login = (email, password) => {
             username: responseData.message,
           },
         });
-        console.log(responseData.id + "login");
+        
         save(
           "user_profile",
           JSON.stringify({

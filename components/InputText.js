@@ -1,13 +1,5 @@
 import React, { useState, useReducer, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  KeyboardAvoidingView,
-  Keyboard,
-} from "react-native";
-import { color } from "react-native-reanimated";
+import { StyleSheet, Text, View, TextInput } from "react-native";
 
 import { colors, fontsMapper } from "../constants/index";
 import TextInputError from "./TextInputError";
@@ -127,9 +119,6 @@ const InputText = (props) => {
         returnKeyType={returnKeyType}
         onFocus={() => setIsFocused(true)}
         multiline={multilineEnabled}
-        // onSubmitEditing={() => {
-        //   Keyboard.dismiss();
-        // }}
         onSubmitEditing={onSubmitEditing}
       />
       <TextInputError

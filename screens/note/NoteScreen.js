@@ -8,10 +8,13 @@ import {
   Text,
   Button,
   TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 
 import NoteItem from "../../components/NoteItem";
 import * as noteActions from "../../store/actions/note";
@@ -21,21 +24,32 @@ import { IS_IPHONE_X } from "../../utils/utils";
 
 const { width } = Dimensions.get("window");
 
-const NoteScreen = ({ route, navigation }) => {
+const NoteScreen = ({ navigation, route }) => {
   const [error, setError] = useState();
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const dispatch = useDispatch();
   const notes = useSelector((state) => state.notes.notes);
+  const pinnedNotes = useSelector((state) => state.notes.pinnedNotes);
+  const isFocused = useIsFocused();
 
   const wWidth = (width - 15 * 2 - 7) / 2;
   const notesIsEmpty = notes.length === 0;
+  const pinnedNoteNotEmpty = pinnedNotes.length > 0;
 
   useEffect(() => {
-    fetchNotes();
-  }, [dispatch, notes]);
+    doRefresh();
+  }, [isFocused]);
 
-  useEffect(() => {
-    handleAddNoteClick();
-  }, [route.params]);
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+  const doRefresh = useCallback(() => {
+    setIsRefreshing(true);
+    wait(2000).then(() => {
+      fetchNotes();
+      setIsRefreshing(false);
+    });
+  }, []);
 
   const fetchNotes = useCallback(async () => {
     setError(null);
@@ -44,33 +58,58 @@ const NoteScreen = ({ route, navigation }) => {
     } catch (error) {
       setError(error.message);
     }
-  }, [dispatch]);
+  }, [dispatch, notes]);
 
-  const handleAddNoteClick = useCallback(() => {
-    if (route.params) {
-      const { addNoteClicked } = route.params;
-      if (addNoteClicked === true) {
-        setShowAddNoteModal(true);
-      }
-    }
-    //navigation.setParams({ addNoteClosed: null });
-  }, [route.params]);
-
-  //const { AddNoteClicked } = route.params;
-  //if this screen has route props
-
-  // const handleAddNote = useCallback(async () => {
-  //   try {
-  //     const date = new Date();
-  //     let result = await SecureStore.getItemAsync("user_profile");
-  //     if (result) {
-  //       const user = JSON.parse(result);
-  //       await dispatch(noteActions.getAllNotes());
-  //     }
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // }, [dispatch]);
+  const RenderPinnedItem = () => {
+    return (
+      <View style={styles.pinnedParent}>
+        <Text style={styles.emptySubText}>Pinned Notes</Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View style={{ marginRight: 0 }}>
+            {pinnedNotes
+              .filter((_, i) => i % 2 !== 0)
+              .map((item) => (
+                <NoteItem
+                  key={item.id}
+                  note={item}
+                  width={wWidth}
+                  aspectRatio={0.9}
+                  onNotePress={() =>
+                    navigation.navigate({
+                      name: "PreviewNote",
+                      params: {
+                        noteId: item.id,
+                      },
+                    })
+                  }
+                />
+              ))}
+          </View>
+          <View>
+            {pinnedNotes
+              .filter((_, i) => i % 2 === 0)
+              .map((item) => (
+                <NoteItem
+                  key={item.id}
+                  note={item}
+                  width={wWidth}
+                  aspectRatio={0.9}
+                  color={item.color}
+                  onNotePress={() =>
+                    navigation.navigate({
+                      name: "PreviewNote",
+                      params: {
+                        noteId: item.id,
+                      },
+                    })
+                  }
+                />
+              ))}
+          </View>
+        </View>
+      </View>
+    );
+  };
 
   if (error) {
     return (
@@ -100,7 +139,16 @@ const NoteScreen = ({ route, navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={doRefresh}
+          tintColor="white"
+        />
+      }
+    >
       <View style={{ margin: 10, marginTop: 30 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={styles.headerText}>Notes</Text>
@@ -113,60 +161,59 @@ const NoteScreen = ({ route, navigation }) => {
             />
           </TouchableOpacity>
         </View>
+        {pinnedNoteNotEmpty && <RenderPinnedItem />}
         <View style={styles.pinnedParent}>
-          <Text style={styles.emptySubText}>All notes</Text>
+          <Text style={styles.emptySubText}>All Notes</Text>
         </View>
-        <ScrollView>
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ marginRight: 10 }}>
-              {notes
-                .filter((_, i) => i % 2 !== 0)
-                .map((item, index) => (
-                  <NoteItem
-                    key={item.id}
-                    note={item}
-                    width={wWidth}
-                    aspectRatio={
-                      index % 2 !== 0 ? 120 / 165 : IS_IPHONE_X ? 1.4 : 1.1
-                    }
-                    isSmall={index % 2 !== 0}
-                    onNotePress={() =>
-                      navigation.navigate({
-                        name: "PreviewNote",
-                        params: {
-                          noteId: item.id,
-                        },
-                      })
-                    }
-                  />
-                ))}
-            </View>
-            <View>
-              {notes
-                .filter((_, i) => i % 2 === 0)
-                .map((item, index) => (
-                  <NoteItem
-                    key={item.id}
-                    note={item}
-                    width={wWidth}
-                    aspectRatio={index % 2 === 0 ? 120 / 165 : 1}
-                    isSmall={index % 2 === 0}
-                    color={item.color}
-                    onNotePress={() =>
-                      navigation.navigate({
-                        name: "PreviewNote",
-                        params: {
-                          noteId: item.id,
-                        },
-                      })
-                    }
-                  />
-                ))}
-            </View>
-          </View>
-        </ScrollView>
       </View>
-    </SafeAreaView>
+      <View style={{ flexDirection: "row" }}>
+        <View style={{ marginRight: 9, marginHorizontal: 10 }}>
+          {notes
+            .filter((_, i) => i % 2 !== 0)
+            .map((item, index) => (
+              <NoteItem
+                key={item.id}
+                note={item}
+                width={wWidth}
+                aspectRatio={
+                  index % 2 !== 0 ? 120 / 165 : IS_IPHONE_X ? 1.4 : 1.1
+                }
+                isSmall={index % 2 !== 0}
+                onNotePress={() =>
+                  navigation.navigate({
+                    name: "PreviewNote",
+                    params: {
+                      noteId: item.id,
+                    },
+                  })
+                }
+              />
+            ))}
+        </View>
+        <View>
+          {notes
+            .filter((_, i) => i % 2 === 0)
+            .map((item, index) => (
+              <NoteItem
+                key={item.id}
+                note={item}
+                width={wWidth}
+                aspectRatio={index % 2 === 0 ? 120 / 165 : 1}
+                isSmall={index % 2 === 0}
+                color={item.color}
+                onNotePress={() =>
+                  navigation.navigate({
+                    name: "PreviewNote",
+                    params: {
+                      noteId: item.id,
+                    },
+                  })
+                }
+              />
+            ))}
+        </View>
+      </View>
+    </ScrollView>
   );
 };
 
