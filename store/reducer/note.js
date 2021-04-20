@@ -35,6 +35,7 @@ export default (state = initialState, action) => {
         action.noteData.content,
         action.noteData.date,
         action.noteData.owner,
+        action.noteData.isPinned,
         action.noteData.id
       );
       return {
@@ -51,6 +52,7 @@ export default (state = initialState, action) => {
         action.noteData.content,
         action.noteData.date,
         action.noteData.owner,
+        action.noteData.isPinned,
         action.noteData.id
       );
       const updatedNotes = [...state.notes];

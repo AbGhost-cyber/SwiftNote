@@ -51,7 +51,7 @@ export const getAllPinnedNotes = () => {
       if (user_profile) {
         const user = JSON.parse(user_profile);
         const response = await fetch(
-          `${SWIFT_SERVER_URL}/user/${user.uid}/note/pin`,
+          `${SWIFT_SERVER_URL}/user/${user.uid}/note?pin=true`,
           {
             method: "GET",
             headers: new Headers({
@@ -111,7 +111,15 @@ export const getNoteById = (id) => {
   };
 };
 
-export const insertNote = (title, content, date, owner, color, id) => {
+export const insertNote = (
+  title,
+  content,
+  date,
+  owner,
+  color,
+  isPinned,
+  id
+) => {
   return async (dispatch) => {
     try {
       let user_profile = await SecureStore.getItemAsync("user_profile");
@@ -128,7 +136,15 @@ export const insertNote = (title, content, date, owner, color, id) => {
                 "Basic " + encode(user.email + ":" + user.password),
               "Content-Type": "application/json",
             }),
-            body: JSON.stringify({ id, title, content, date, owner, color }),
+            body: JSON.stringify({
+              id,
+              title,
+              content,
+              date,
+              owner,
+              color,
+              isPinned,
+            }),
           }
         );
 
@@ -145,6 +161,7 @@ export const insertNote = (title, content, date, owner, color, id) => {
             date,
             owner,
             color,
+            isPinned,
           },
         });
       }
@@ -160,7 +177,15 @@ was made and determine if it's to update or to insert
  but for redux action type sake we need to create two methods for
   inserting and updating
 */
-export const updatetNote = (title, content, date, owner, color, id) => {
+export const updatetNote = (
+  title,
+  content,
+  date,
+  owner,
+  color,
+  isPinned,
+  id
+) => {
   return async (dispatch) => {
     try {
       let user_profile = await SecureStore.getItemAsync("user_profile");
@@ -175,7 +200,15 @@ export const updatetNote = (title, content, date, owner, color, id) => {
                 "Basic " + encode(user.email + ":" + user.password),
               "Content-Type": "application/json",
             }),
-            body: JSON.stringify({ id, title, content, date, owner, color }),
+            body: JSON.stringify({
+              id,
+              title,
+              content,
+              date,
+              owner,
+              isPinned,
+              color,
+            }),
           }
         );
 
@@ -192,6 +225,7 @@ export const updatetNote = (title, content, date, owner, color, id) => {
             date,
             owner,
             color,
+            isPinned,
           },
         });
       }

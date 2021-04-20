@@ -75,6 +75,7 @@ const AddEditNoteModal = ({ navigation, route }) => {
             date.valueOf(),
             editedNote.owner,
             color,
+            editedNote.isPinned,
             _noteId
           )
         );
@@ -98,6 +99,7 @@ const AddEditNoteModal = ({ navigation, route }) => {
               date.valueOf(),
               user.email,
               color,
+              false,
               id
             )
           );

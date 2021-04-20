@@ -14,7 +14,14 @@ const formattedDate = (timeInMillis) => {
   return moment(timeInMillis).fromNow();
 };
 const NoteItem = (props) => {
-  const { width, aspectRatio, isSmall, note, onNotePress } = props;
+  const {
+    width,
+    aspectRatio,
+    isSmall,
+    note,
+    onNotePress,
+    contentNumLines,
+  } = props;
   return (
     <TouchableOpacity activeOpacity={0.9} onPress={onNotePress}>
       <View
@@ -31,13 +38,15 @@ const NoteItem = (props) => {
         </Text>
         {!isSmall && (
           <Text
-            numberOfLines={IS_IPHONE_X ? 4 : 3}
+            numberOfLines={
+              IS_IPHONE_X ? 4 : contentNumLines ? contentNumLines : 3
+            }
             style={[styles.subText, { width: width }]}
           >
             {note.content}
           </Text>
         )}
-        <Text style={[styles.date]}>{formattedDate(note.date)}</Text>
+        <Text style={[styles.date]} numberOfLines = {1}>{formattedDate(note.date)}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -55,7 +64,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     color: colors.primary,
     fontSize: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     fontFamily: fontsMapper.pro_sans_bold,
   },
   date: {
@@ -74,9 +83,8 @@ const styles = StyleSheet.create({
   },
   subText: {
     justifyContent: "flex-start",
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     fontFamily: fontsMapper.pro_sans,
-    fontWeight: "600",
     color: colors.primary,
     fontSize: 16.5,
   },

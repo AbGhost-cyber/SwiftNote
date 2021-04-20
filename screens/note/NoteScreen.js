@@ -38,6 +38,7 @@ const NoteScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     doRefresh();
+    return () => setIsRefreshing(false);
   }, [isFocused]);
 
   const wait = (timeout) => {
@@ -47,6 +48,7 @@ const NoteScreen = ({ navigation, route }) => {
     setIsRefreshing(true);
     wait(2000).then(() => {
       fetchNotes();
+      fetchAllPinnedNotes()
       setIsRefreshing(false);
     });
   }, []);
@@ -59,6 +61,15 @@ const NoteScreen = ({ navigation, route }) => {
       setError(error.message);
     }
   }, [dispatch, notes]);
+
+  const fetchAllPinnedNotes = useCallback(async () => {
+    setError(null);
+    try {
+      await dispatch(noteActions.getAllPinnedNotes());
+    } catch (error) {
+      setError(error.message);
+    }
+  }, [dispatch, pinnedNotes]);
 
   const RenderPinnedItem = () => {
     return (
@@ -73,7 +84,8 @@ const NoteScreen = ({ navigation, route }) => {
                   key={item.id}
                   note={item}
                   width={wWidth}
-                  aspectRatio={0.9}
+                  aspectRatio={1}
+                  contentNumLines={2}
                   onNotePress={() =>
                     navigation.navigate({
                       name: "PreviewNote",
@@ -93,8 +105,9 @@ const NoteScreen = ({ navigation, route }) => {
                   key={item.id}
                   note={item}
                   width={wWidth}
-                  aspectRatio={0.9}
+                  aspectRatio={1}
                   color={item.color}
+                  contentNumLines={2}
                   onNotePress={() =>
                     navigation.navigate({
                       name: "PreviewNote",
