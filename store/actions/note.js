@@ -252,12 +252,19 @@ export const pinNote = (id) => {
             }),
           }
         );
-
+       
+        const resData = await response.json()
         if (!response.ok) {
           throw new Error("Something went wrong 😔");
         }
-
+        else if(!resData.success){
+          throw new Error(resData.message);
+        }
+      
+       else if(resData.success && response.ok){
         dispatch({ type: PIN_NOTE, id });
+       } 
+        
       }
     } catch (error) {
       throw new Error(error.message);

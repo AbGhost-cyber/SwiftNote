@@ -72,9 +72,10 @@ const PreviewNoteScreen = ({ route, navigation }) => {
     setError(null);
     try {
       await dispatch(noteActions.pinNote(noteId));
-      navigation.goBack()
+      navigation.goBack();
     } catch (error) {
       setError(error.message);
+      alert(error.message)
     }
   }, [previewedNote, noteId, dispatch]);
 
@@ -106,7 +107,7 @@ const PreviewNoteScreen = ({ route, navigation }) => {
           <Text style={styles.preTitle}>{previewedNote.title}</Text>
           <Text style={styles.preContent}>{previewedNote.content}</Text>
         </View>
-        {error && (
+        {error && error === "Network request failed" && (
           <View style={styles.errorContainer}>
             <MaterialCommunityIcons
               name="cloud-off-outline"

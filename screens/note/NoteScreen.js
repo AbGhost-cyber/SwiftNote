@@ -24,7 +24,7 @@ import { IS_IPHONE_X } from "../../utils/utils";
 
 const { width } = Dimensions.get("window");
 
-const NoteScreen = ({ navigation, route }) => {
+const NoteScreen = ({ navigation }) => {
   const [error, setError] = useState();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const dispatch = useDispatch();
@@ -33,13 +33,14 @@ const NoteScreen = ({ navigation, route }) => {
   const isFocused = useIsFocused();
 
   const wWidth = (width - 15 * 2 - 7) / 2;
-  const notesIsEmpty = notes.length === 0;
-  const pinnedNoteNotEmpty = pinnedNotes.length > 0;
 
   useEffect(() => {
     doRefresh();
     return () => setIsRefreshing(false);
   }, [isFocused]);
+
+  const notesIsEmpty = notes.length === 0;
+  const pinnedNoteNotEmpty = pinnedNotes.length > 0;
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -48,7 +49,7 @@ const NoteScreen = ({ navigation, route }) => {
     setIsRefreshing(true);
     wait(2000).then(() => {
       fetchNotes();
-      fetchAllPinnedNotes()
+      fetchAllPinnedNotes();
       setIsRefreshing(false);
     });
   }, []);
