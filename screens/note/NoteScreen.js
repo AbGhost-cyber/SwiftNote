@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  Alert,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +19,7 @@ import { useIsFocused } from "@react-navigation/native";
 
 import NoteItem from "../../components/NoteItem";
 import * as noteActions from "../../store/actions/note";
-import { colors, fontsMapper } from "../../constants/index";
+import { colors, deleteItem, fontsMapper } from "../../constants/index";
 import CustomButton from "../../components/Button";
 import { IS_IPHONE_X } from "../../utils/utils";
 
@@ -71,6 +72,27 @@ const NoteScreen = ({ navigation }) => {
       setError(error.message);
     }
   }, [dispatch, pinnedNotes]);
+
+  const logOutHandler = useCallback(async () => {
+    Alert.alert(
+      "Do you wish to log out? 🙁",
+      "you will be redirected to the sign up screen",
+      [
+        {
+          text: "Do it 👊",
+          onPress: () => {
+            deleteItem("user_profile");
+            deleteItem("isLoggedIn");
+            navigation.navigate("SignUp");
+          },
+          style: "destructive",
+        },
+        {
+          text: "No",
+        },
+      ]
+    );
+  }, []);
 
   const RenderPinnedItem = () => {
     return (
@@ -166,7 +188,7 @@ const NoteScreen = ({ navigation }) => {
       <View style={{ margin: 10, marginTop: 30 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={styles.headerText}>Notes</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => logOutHandler()}>
             <Ionicons
               name="log-out"
               size={27}

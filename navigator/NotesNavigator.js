@@ -12,7 +12,6 @@ import SignUpScreen from "../screens/auth/SignUpScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import NoteScreen from "../screens/note/NoteScreen";
 import PreviewNoteScreen from "../screens/note/PreviewNoteScreen";
-import LogoutScreen from "../screens/LogoutScreen";
 import SearchScreen from "../screens/SearchScreen";
 import { IS_IPHONE_X } from "../utils/utils";
 import TabBarButton from "../components/TabBarButton";
@@ -30,7 +29,6 @@ const StackNav = () => {
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="NoteMainActivity" component={NoteTabBar} />
       <Stack.Screen name="PreviewNote" component={PreviewNoteScreen} />
-      <Stack.Screen name="Log out" component={LogoutScreen} />
     </Stack.Navigator>
   );
 };
