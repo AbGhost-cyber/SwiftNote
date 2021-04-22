@@ -107,8 +107,8 @@ const NoteScreen = ({ navigation }) => {
                   key={item.id}
                   note={item}
                   width={wWidth}
-                  aspectRatio={1}
-                  contentNumLines={2}
+                  aspectRatio={0.98}
+                  contentNumLines={3}
                   onNotePress={() =>
                     navigation.navigate({
                       name: "PreviewNote",
@@ -128,9 +128,9 @@ const NoteScreen = ({ navigation }) => {
                   key={item.id}
                   note={item}
                   width={wWidth}
-                  aspectRatio={1}
+                  aspectRatio={0.98}
                   color={item.color}
-                  contentNumLines={2}
+                  contentNumLines={3}
                   onNotePress={() =>
                     navigation.navigate({
                       name: "PreviewNote",
@@ -212,7 +212,7 @@ const NoteScreen = ({ navigation }) => {
                 note={item}
                 width={wWidth}
                 aspectRatio={
-                  index % 2 !== 0 ? 120 / 165 : IS_IPHONE_X ? 1.4 : 1.1
+                  index % 2 !== 0 ? 120 / 165 : IS_IPHONE_X ? 1.4 : 0.96
                 }
                 isSmall={index % 2 !== 0}
                 onNotePress={() =>
@@ -234,7 +234,7 @@ const NoteScreen = ({ navigation }) => {
                 key={item.id}
                 note={item}
                 width={wWidth}
-                aspectRatio={index % 2 === 0 ? 120 / 165 : 1}
+                aspectRatio={index % 2 === 0 ? 120 / 165 : 0.96}
                 isSmall={index % 2 === 0}
                 color={item.color}
                 onNotePress={() =>
